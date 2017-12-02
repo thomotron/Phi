@@ -175,12 +175,18 @@ namespace PhiClient
             if (user != phiClient.currentUser || true)
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
+                options.Add(new FloatMenuOption("Mention " + user.name, () => { OnMentionOptionClick(user); }));
                 options.Add(new FloatMenuOption("Ship items", () => { OnShipItemsOptionClick(user); }));
                 options.Add(new FloatMenuOption("Send colonist", () => { OnSendColonistOptionClick(user); }));
                 options.Add(new FloatMenuOption("Send animal", () => { OnSendAnimalOptionClick(user); }));
 
                 Find.WindowStack.Add(new FloatMenu(options));
             }
+        }
+
+        private void OnMentionOptionClick(User user)
+        {
+            this.enteredMessage += "@" + user.name;
         }
 
         public void OnSendColonistOptionClick(User user)
