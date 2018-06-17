@@ -165,6 +165,8 @@ namespace PhiServer
                         userLastLoginTime.Add(userId, DateTime.Now);
                     }
 
+                    user.lastTransactionTime = userLastLoginTime[userId];
+
                     this.connectedUsers.Add(client, user);
                     Log(LogLevel.INFO, string.Format("Client {0} connected as {1} ({2})", client.ID, user.name, user.id));
 
