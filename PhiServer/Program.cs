@@ -54,7 +54,7 @@ namespace PhiServer
             }
             else if (level == LogLevel.ERROR)
             {
-                tag = "DEBUG";
+                tag = "ERROR";
             }
             else if (level == LogLevel.INFO)
             {
