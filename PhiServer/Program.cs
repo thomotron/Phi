@@ -4,6 +4,7 @@ using SocketLibrary;
 using PhiClient;
 using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 using PhiClient.TransactionSystem;
 
 namespace PhiServer
@@ -61,7 +62,18 @@ namespace PhiServer
                 tag = "INFO";
             }
 
-            Console.WriteLine(string.Format("[{0}] [{1}] {2}", DateTime.Now, tag, message));
+            string logLine = string.Format("[{0}] [{1}] {2}", DateTime.Now, tag, message);
+
+            Console.WriteLine(logLine);
+            AppendLog(logLine);
+        }
+
+        private void AppendLog(string line)
+        {
+            using (StreamWriter sw = new StreamWriter("server.log", true))
+            {
+                sw.WriteLine(line);
+            }
         }
 
         private void RealmPacketCallback(User user, Packet packet)
