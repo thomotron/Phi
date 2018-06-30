@@ -35,6 +35,12 @@ namespace PhiServer
             this.realmData.Log += Log;
         }
 
+        public void Stop()
+        {
+            Log(LogLevel.INFO, "Stopping server...");
+            this.server.Stop();
+        }
+
         private void ConnectionCallback(ServerClient client)
         {
             Log(LogLevel.INFO, "Connection from " + client.ID);
