@@ -14,6 +14,7 @@ namespace PhiServer
         private RealmData realmData;
         private Dictionary<ServerClient, User> connectedUsers = new Dictionary<ServerClient, User>();
         private Dictionary<int, string> userKeys = new Dictionary<int, string>();
+        private Dictionary<int, DateTime> userLastLoginTime = new Dictionary<int, DateTime>();
         private LogLevel logLevel;
 
         private object lockProcessPacket = new object();
@@ -154,6 +155,17 @@ namespace PhiServer
                         // We send a connect notification to all users
                         this.realmData.BroadcastPacketExcept(new UserConnectedPacket { user = user, connected = true }, user);
                     }
+
+                    if (userLastLoginTime.ContainsKey(userId))
+                    {
+                        userLastLoginTime[userId] = DateTime.Now;
+                    }
+                    else
+                    {
+                        userLastLoginTime.Add(userId, DateTime.Now);
+                    }
+
+                    user.lastTransactionTime = userLastLoginTime[userId];
 
                     this.connectedUsers.Add(client, user);
                     Log(LogLevel.INFO, string.Format("Client {0} connected as {1} ({2})", client.ID, user.name, user.id));
