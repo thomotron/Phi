@@ -4,6 +4,7 @@ using SocketLibrary;
 using PhiClient;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using PhiClient.TransactionSystem;
 
 namespace PhiServer
@@ -252,7 +253,59 @@ namespace PhiServer
 
             program.Start(IPAddress.Any, 16180, logLevel);
 
-            Console.Read();
+            bool exit = false;
+            while (!exit)
+            {
+                string line = Console.ReadLine();
+
+                string command = line.Split(' ').First();
+                string commandArgs = line.Split(' ').Last();
+
+                bool result;
+                switch (command)
+                {
+                    case "help":
+                        result = cmdHelp();
+                        break;
+                    case "exit":
+                        result = cmdExit(program);
+                        exit = true;
+                        break;
+                    case "version":
+                        result = cmdVersion();
+                        break;
+                    default:
+                        Console.WriteLine($"Unrecognised command: {command}");
+                        Console.WriteLine("Type \"help\" to get a list of commands.");
+                        result = true;
+                        break;
+                }
+
+                if (!result) Console.WriteLine($"Command \"{command}\" failed with args: {commandArgs}");
+            }
+        }
+
+        private static bool cmdHelp()
+        {
+            Console.WriteLine("help             Display this help list\n" +
+                              "version          Display the server version\n" +
+                              "exit             Stop the server");
+
+            return true;
+        }
+
+        private static bool cmdExit(Program p)
+        {
+            p.Stop();
+
+            return true;
+        }
+
+        private static bool cmdVersion()
+        {
+            Console.WriteLine($"PhiServer running realm data version {RealmData.VERSION}");
+
+            return true;
         }
     }
 }
