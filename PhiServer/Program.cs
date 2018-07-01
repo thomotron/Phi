@@ -15,6 +15,8 @@ namespace PhiServer
         private RealmData realmData;
         private Dictionary<ServerClient, User> connectedUsers = new Dictionary<ServerClient, User>();
         private Dictionary<int, string> userKeys = new Dictionary<int, string>();
+        private List<string> bannedKeys = new List<string>();
+
         private LogLevel logLevel;
 
         private object lockProcessPacket = new object();
@@ -236,6 +238,27 @@ namespace PhiServer
             }
 
             return id;
+        }
+
+        private void AddIdBan(int id)
+        {
+            string key = userKeys[id];
+
+            // Check if user is already banned
+            if (bannedKeys.Contains(key))
+            {
+                // User is already banned
+                return;
+            }
+
+            // Add the key to the ban list
+            bannedKeys.Add(key);
+
+            // Find the connection for the newly banned user
+            ServerClient client = connectedUsers.First(connectedUserPair => connectedUserPair.Value.id == id).Key;
+
+            // Terminate the connection
+            client.Close();
         }
 
         static void Main(string[] args)
