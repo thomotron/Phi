@@ -368,9 +368,9 @@ namespace PhiServer
             return true;
         }
 
-        private static bool cmdExit(Program p)
+        private static bool cmdExit(Program program)
         {
-            p.Stop();
+            program.Stop();
 
             return true;
         }
