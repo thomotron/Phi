@@ -147,7 +147,7 @@ namespace PhiServer
                     // Check if the user's key is banned
                     if (bannedKeys.Contains(authPacket.hashedKey))
                     {
-                        Log(LogLevel.INFO, $"Client {client.ID} is authenticating with a banned key (id , disconnecting...");
+                        Log(LogLevel.INFO, $"Client {client.ID} is authenticating with a banned key ({authPacket.hashedKey}), disconnecting...");
 
                         // Close the connection
                         client.Close();
