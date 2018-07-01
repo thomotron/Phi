@@ -343,8 +343,8 @@ namespace PhiServer
                     case "clients":
                         result = cmdClients(program);
                         break;
-                    case "banid":
-                        result = cmdBanId(program, commandArgs);
+                    case "ban":
+                        result = cmdBan(program, commandArgs);
                         break;
                     default:
                         Console.WriteLine($"Unrecognised command: {command}");
@@ -363,7 +363,8 @@ namespace PhiServer
                               "version                      Display the server version.\n" +
                               "exit                         Stop the server.\n" +
                               "clients                      Display all connected clients.\n" +
-                              "banid <id>                   Ban a user by their key.");
+                              "ban <id>                     Ban a user by their key.\n" +
+                              "ban ip <ip>                  Ban an ip address from connecting.");
 
             return true;
         }
@@ -407,7 +408,7 @@ namespace PhiServer
             return true;
         }
 
-        private static bool cmdBanId(Program program, List<string> args)
+        private static bool cmdBan(Program program, List<string> args)
         {
             // Check if any arguments were included
             if (args.Count == 0)
@@ -415,27 +416,47 @@ namespace PhiServer
                 Console.WriteLine("No user id specified.");
                 return false;
             }
-            
-            // Parse the user id included in the arguments
-            int id;
-            if (int.TryParse(args.ElementAt(0), out id) && id > 0)
+
+            // Is this an IP ban?
+            if (args.ElementAt(0) == "ip" && args.Count > 1)
             {
-                // Check whether a user exists matching this id
-                if (program.userKeys.ContainsKey(id))
+                // Parse the ip included in the arguments
+                IPAddress ipAddress;
+                if (IPAddress.TryParse(args.ElementAt(1), out ipAddress))
                 {
                     // Apply the ban
-                    program.AddIdBan(id);
+                    program.AddIpBan(ipAddress);
                 }
                 else
                 {
-                    Console.WriteLine($"Unable to find user matching id {id}");
+                    Console.WriteLine($"{args.ElementAt(1)} is not a valid IP address");
                     return false;
                 }
             }
             else
             {
-                Console.WriteLine($"{args.ElementAt(0)} is not a valid user id");
-                return false;
+                // Not an IP ban, so assume an id ban
+                // Parse the user id included in the arguments
+                int id;
+                if (int.TryParse(args.ElementAt(0), out id) && id > 0)
+                {
+                    // Check whether a user exists matching this id
+                    if (program.userKeys.ContainsKey(id))
+                    {
+                        // Apply the ban
+                        program.AddIdBan(id);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Unable to find user matching id {id}");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"{args.ElementAt(0)} is not a valid user id");
+                    return false;
+                }
             }
             
             return true;
