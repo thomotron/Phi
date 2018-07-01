@@ -322,9 +322,10 @@ namespace PhiServer
             while (!exit)
             {
                 string line = Console.ReadLine();
-
-                string command = line.Split(' ').First();
-                string commandArgs = line.Split(' ').Last();
+                
+                List<string> commandArgs = line.Split(' ').ToList();
+                string command = commandArgs.First();
+                commandArgs.RemoveAt(0);
 
                 bool result;
                 switch (command)
@@ -346,7 +347,7 @@ namespace PhiServer
                         break;
                 }
 
-                if (!result) Console.WriteLine($"Command \"{command}\" failed with args: {commandArgs}");
+                if (!result) Console.WriteLine($"Command \"{command}\" failed with args: {string.Join(" ", commandArgs.ToArray())}");
             }
         }
 
