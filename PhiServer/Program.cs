@@ -422,7 +422,7 @@ namespace PhiServer
             // Print out each connected user's name, id, and ip
             foreach (KeyValuePair<ServerClient, User> pair in program.connectedUsers)
             {
-                string name = pair.Value.name;
+                string name = TextHelper.StripRichText(pair.Value.name);
                 string id = pair.Value.id.ToString();
                 string ip = pair.Key.Context.UserEndPoint.Address.ToString();
                 
