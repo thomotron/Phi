@@ -16,6 +16,7 @@ namespace PhiServer
         private Dictionary<ServerClient, User> connectedUsers = new Dictionary<ServerClient, User>();
         private Dictionary<int, string> userKeys = new Dictionary<int, string>();
         private List<string> bannedKeys = new List<string>();
+        private List<IPAddress> bannedIPs = new List<IPAddress>();
 
         private LogLevel logLevel;
 
@@ -259,6 +260,28 @@ namespace PhiServer
 
             // Terminate the connection
             client.Close();
+        }
+
+        private void AddIpBan(IPAddress ipAddress)
+        {
+            // Check if IP is already banned
+            if (bannedIPs.Contains(ipAddress))
+            {
+                // IP is already banned
+                return;
+            }
+
+            // Add the IP to the ban list
+            bannedIPs.Add(ipAddress);
+
+            // Disconnect any clients connected from the newly banned IP
+            foreach (ServerClient client in connectedUsers.Keys)
+            {
+                if (client.Context.UserEndPoint.Address.Equals(ipAddress))
+                {
+                    client.Close();
+                }
+            }
         }
 
         static void Main(string[] args)
