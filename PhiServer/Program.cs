@@ -48,6 +48,15 @@ namespace PhiServer
         private void ConnectionCallback(ServerClient client)
         {
             Log(LogLevel.INFO, "Connection from " + client.ID);
+
+            // Check if the connecting client's IP is banned
+            if (bannedIPs.Contains(client.Context.UserEndPoint.Address))
+            {
+                Log(LogLevel.INFO, $"Client {client.ID} is connecting from a banned IP address, disconnecting...");
+
+                // Close the connection
+                client.Close();
+            }
         }
 
         private void Log(LogLevel level, string message)
@@ -132,6 +141,16 @@ namespace PhiServer
                             error = "Server is version " + RealmData.VERSION + " but client is version " + authPacket.version
                         }
                         );
+                        return;
+                    }
+
+                    // Check if the user's key is banned
+                    if (bannedKeys.Contains(authPacket.hashedKey))
+                    {
+                        Log(LogLevel.INFO, $"Client {client.ID} is authenticating with a banned key (id , disconnecting...");
+
+                        // Close the connection
+                        client.Close();
                         return;
                     }
 
