@@ -44,6 +44,11 @@ namespace SocketLibrary
             });
         }
 
+        public void Stop()
+        {
+            this.server.Stop();
+        }
+
         internal void ConnectionCallback(ServerClient client)
         {
             this.clients.Add(client);

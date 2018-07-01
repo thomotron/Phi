@@ -28,6 +28,11 @@ namespace SocketLibrary
             this.SendAsync(data, null);
         }
 
+        public void Close()
+        {
+            this.Context.WebSocket.Close();
+        }
+
         protected override void OnMessage(MessageEventArgs e)
         {
             base.OnMessage(e);
