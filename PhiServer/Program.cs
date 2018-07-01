@@ -344,7 +344,7 @@ namespace PhiServer
                         result = cmdClients(program);
                         break;
                     case "banid":
-                        result = cmdBan(program, commandArgs);
+                        result = cmdBanId(program, commandArgs);
                         break;
                     default:
                         Console.WriteLine($"Unrecognised command: {command}");
@@ -407,7 +407,7 @@ namespace PhiServer
             return true;
         }
 
-        private static bool cmdBan(Program program, List<string> args)
+        private static bool cmdBanId(Program program, List<string> args)
         {
             // Check if any arguments were included
             if (args.Count == 0)
