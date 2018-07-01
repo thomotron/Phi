@@ -3,7 +3,7 @@ using System.Net;
 using SocketLibrary;
 using PhiClient;
 using System.Collections.Generic;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Linq;
 using PhiClient.TransactionSystem;
 
@@ -13,7 +13,7 @@ namespace PhiServer
     {
         private Server server;
         private RealmData realmData;
-        private Dictionary<ServerClient, User> connectedUsers = new Dictionary<ServerClient, User>();
+        private ConcurrentDictionary<ServerClient, User> connectedUsers = new ConcurrentDictionary<ServerClient, User>();
         private Dictionary<int, string> userKeys = new Dictionary<int, string>();
         private List<string> bannedKeys = new List<string>();
         private List<IPAddress> bannedIPs = new List<IPAddress>();
@@ -112,7 +112,7 @@ namespace PhiServer
             if (user != null)
             {
                 Log(LogLevel.INFO, string.Format("{0} disconnected", user.name));
-                this.connectedUsers.Remove(client);
+                this.connectedUsers.TryRemove(client, out _);
                 user.connected = false;
                 this.realmData.BroadcastPacket(new UserConnectedPacket { user = user, connected = false });
             }
@@ -184,7 +184,7 @@ namespace PhiServer
                         this.realmData.BroadcastPacketExcept(new UserConnectedPacket { user = user, connected = true }, user);
                     }
 
-                    this.connectedUsers.Add(client, user);
+                    this.connectedUsers.TryAdd(client, user);
                     Log(LogLevel.INFO, string.Format("Client {0} connected as {1} ({2})", client.ID, user.name, user.id));
 
                     // We respond with a StatePacket that contains all synchronisation data
