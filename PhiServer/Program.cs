@@ -281,6 +281,16 @@ namespace PhiServer
             client.Close();
         }
 
+        private void RemoveIdBan(int id)
+        {
+            string key = userKeys[id];
+
+            if (bannedKeys.Contains(key))
+            {
+                bannedKeys.Remove(key);
+            }
+        }
+
         private void AddIpBan(IPAddress ipAddress)
         {
             // Check if IP is already banned
@@ -300,6 +310,14 @@ namespace PhiServer
                 {
                     client.Close();
                 }
+            }
+        }
+
+        private void RemoveIpBan(IPAddress ipAddress)
+        {
+            if (bannedIPs.Contains(ipAddress))
+            {
+                bannedIPs.Remove(ipAddress);
             }
         }
 
@@ -346,6 +364,9 @@ namespace PhiServer
                     case "ban":
                         result = cmdBan(program, commandArgs);
                         break;
+                    case "unban":
+                        result = cmdUnban(program, commandArgs);
+                        break;
                     default:
                         Console.WriteLine($"Unrecognised command: {command}");
                         Console.WriteLine("Type \"help\" to get a list of commands.");
@@ -363,8 +384,11 @@ namespace PhiServer
                               "version                      Display the server version.\n" +
                               "exit                         Stop the server.\n" +
                               "clients                      Display all connected clients.\n" +
-                              "ban <id>                     Ban a user by their key.\n" +
-                              "ban ip <ip>                  Ban an ip address from connecting.");
+                              "\n" +
+                              "ban <id>                     Ban a user's key.\n" +
+                              "ban ip <ip>                  Ban an ip address from connecting.\n" +
+                              "unban <id>                   Unban a banned user's key.\n" +
+                              "unban ip <ip>                Unban an ip address");
 
             return true;
         }
@@ -408,7 +432,7 @@ namespace PhiServer
             return true;
         }
 
-        private static bool cmdBan(Program program, List<string> args)
+        private static bool cmdBan(Program program, List<string> args, bool unban = false)
         {
             // Check if any arguments were included
             if (args.Count == 0)
@@ -424,8 +448,16 @@ namespace PhiServer
                 IPAddress ipAddress;
                 if (IPAddress.TryParse(args.ElementAt(1), out ipAddress))
                 {
-                    // Apply the ban
-                    program.AddIpBan(ipAddress);
+                    if (unban)
+                    {
+                        // Remove the ban
+                        program.RemoveIpBan(ipAddress);
+                    }
+                    else
+                    {
+                        // Apply the ban
+                        program.AddIpBan(ipAddress);
+                    }
                 }
                 else
                 {
@@ -443,8 +475,16 @@ namespace PhiServer
                     // Check whether a user exists matching this id
                     if (program.userKeys.ContainsKey(id))
                     {
-                        // Apply the ban
-                        program.AddIdBan(id);
+                        if (unban)
+                        {
+                            // Remove the ban
+                            program.RemoveIdBan(id);
+                        }
+                        else
+                        {
+                            // Apply the ban
+                            program.AddIdBan(id);
+                        }
                     }
                     else
                     {
@@ -460,6 +500,11 @@ namespace PhiServer
             }
             
             return true;
+        }
+
+        private static bool cmdUnban(Program program, List<string> args)
+        {
+            return cmdBan(program, args, true);
         }
     }
 }
