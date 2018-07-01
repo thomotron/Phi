@@ -340,6 +340,9 @@ namespace PhiServer
                     case "version":
                         result = cmdVersion();
                         break;
+                    case "clients":
+                        result = cmdClients(program);
+                        break;
                     default:
                         Console.WriteLine($"Unrecognised command: {command}");
                         Console.WriteLine("Type \"help\" to get a list of commands.");
@@ -353,9 +356,10 @@ namespace PhiServer
 
         private static bool cmdHelp()
         {
-            Console.WriteLine("help             Display this help list\n" +
-                              "version          Display the server version\n" +
-                              "exit             Stop the server");
+            Console.WriteLine("help                         Display this help list.\n" +
+                              "version                      Display the server version.\n" +
+                              "exit                         Stop the server.\n" +
+                              "clients                      Display all connected clients.");
 
             return true;
         }
@@ -370,6 +374,31 @@ namespace PhiServer
         private static bool cmdVersion()
         {
             Console.WriteLine($"PhiServer running realm data version {RealmData.VERSION}");
+
+            return true;
+        }
+
+        private static bool cmdClients(Program program)
+        {
+            // Check if anyone is connected
+            if (program.connectedUsers.Count == 0)
+            {
+                Console.WriteLine("No clients connected");
+                return true;
+            }
+
+            // Print out a header for the table
+            Console.WriteLine($"{"Name".PadRight(70)} {"ID".PadRight(10)} {"IP".PadRight(15)}");
+
+            // Print out each connected user's name, id, and ip
+            foreach (KeyValuePair<ServerClient, User> pair in program.connectedUsers)
+            {
+                string name = pair.Value.name;
+                string id = pair.Value.id.ToString();
+                string ip = pair.Key.Context.UserEndPoint.Address.ToString();
+                
+                Console.WriteLine($"{name.PadRight(70)} {id.PadRight(10)} {ip.PadRight(15)}");
+            }
 
             return true;
         }
