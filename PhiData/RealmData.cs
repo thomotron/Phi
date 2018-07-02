@@ -113,6 +113,7 @@ namespace PhiClient
 
         public User ServerAddUser(string name, int id)
         {
+            name = TextHelper.Clamp(TextHelper.StripRichText(name), User.MIN_NAME_LENGTH, User.MAX_NAME_LENGTH);
 
             User user = new User
             {
