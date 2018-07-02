@@ -54,12 +54,12 @@ namespace PhiServer
 
         private void ConnectionCallback(ServerClient client)
         {
-            Log(LogLevel.INFO, "Connection from " + client.ID);
+            Log(LogLevel.INFO, $"Connection from {client.Context.UserEndPoint.Address} ({client.ID})");
 
             // Check if the connecting client's IP is banned
             if (bannedIPs.Contains(client.Context.UserEndPoint.Address))
             {
-                Log(LogLevel.INFO, $"Client {client.ID} is connecting from a banned IP address, disconnecting...");
+                Log(LogLevel.INFO, $"Client {client.ID} is connecting from a banned IP address ({client.Context.UserEndPoint.Address}), disconnecting...");
 
                 // Close the connection
                 client.Close();
@@ -237,7 +237,7 @@ namespace PhiServer
                     Log(LogLevel.DEBUG, $"Set last transaction time for user {user.name} as {DateTime.Now}");
                     
                     this.connectedUsers.TryAdd(client, user);
-                    Log(LogLevel.INFO, string.Format("Client {0} connected as {1} ({2})", client.ID, user.name, user.id));
+                    Log(LogLevel.INFO, string.Format("Client {0} ({3}) connected as {1} ({2})", client.ID, user.name, user.id, client.Context.UserEndPoint.Address));
 
                     // We respond with a StatePacket that contains all synchronisation data
                     this.SendPacket(client, user, new SynchronisationPacket { user = user, realmData = this.realmData });
