@@ -13,6 +13,10 @@ namespace PhiServer
 {
     public class Program
     {
+        private const string ID_BAN_FILE = "bannedkeys.txt";
+        private const string IP_BAN_FILE = "bannedips.txt";
+        private const string USER_FILE = "users.txt";
+
         private Server server;
         private RealmData realmData;
         private ConcurrentDictionary<ServerClient, User> connectedUsers = new ConcurrentDictionary<ServerClient, User>();
@@ -29,6 +33,14 @@ namespace PhiServer
         {
             this.logLevel = logLevel;
 
+            this.realmData = new RealmData();
+            this.realmData.PacketToClient += this.RealmPacketCallback;
+            this.realmData.Log += Log;
+
+            Log(LogLevel.DEBUG, "Initialised RealmData");
+
+            ReadPersistentData();
+
             this.server = new Server(ipAddress, port);
             this.server.Start();
             Log(LogLevel.INFO, string.Format("Server launched on port {0}", port));
@@ -38,18 +50,47 @@ namespace PhiServer
             this.server.Disconnection += this.DisconnectionCallback;
 
             Log(LogLevel.DEBUG, "Registered callbacks");
-
-            this.realmData = new RealmData();
-            this.realmData.PacketToClient += this.RealmPacketCallback;
-            this.realmData.Log += Log;
-
-            Log(LogLevel.DEBUG, "Initialised RealmData");
         }
 
         public void Stop()
         {
             Log(LogLevel.INFO, "Stopping server...");
             this.server.Stop();
+        }
+
+        public void ReadPersistentData()
+        {
+            // Read in all user id and key pairs
+            if (File.Exists(USER_FILE))
+            foreach (string line in File.ReadAllLines(USER_FILE))
+            {
+                int id;
+                if (int.TryParse(line.Split(':').First(), out id))
+                {
+                    string key = line.Split(':').Length > 1 ? line.Split(':').ElementAt(1) : "";
+                    userKeys.Add(id, key);
+
+                    realmData.lastUserGivenId = id;
+                }
+            }
+
+            // Read in all banned keys
+            if (File.Exists(ID_BAN_FILE))
+            foreach (string line in File.ReadAllLines(ID_BAN_FILE))
+            {
+                bannedKeys.Add(line);
+            }
+
+            // Read in all banned IPs
+            if (File.Exists(IP_BAN_FILE))
+            foreach (string line in File.ReadAllLines(IP_BAN_FILE))
+            {
+                IPAddress ipAddress;
+                if (IPAddress.TryParse(line, out ipAddress))
+                {
+                    bannedIPs.Add(ipAddress);
+                }
+            }
         }
 
         private void ConnectionCallback(ServerClient client)
@@ -321,22 +362,30 @@ namespace PhiServer
                 if (hashedKey != userKeys[id])
                 {
                     Log(LogLevel.DEBUG, $"Hashed key does not match, registering to new id");
-
-                    // Register a new id and key pair
-                    id = ++realmData.lastUserGivenId;
-                    userKeys.Add(id, hashedKey);
+                    
+                    id = RegisterNewUserKey(hashedKey);
                 }
             }
             else
             {
                 Log(LogLevel.DEBUG, $"Invalid id, registering to new id");
-
-                // Register a new id and key pair
-                id = ++realmData.lastUserGivenId;
-                userKeys.Add(id, hashedKey);
+                
+                id = RegisterNewUserKey(hashedKey);
             }
 
             Log(LogLevel.DEBUG, $"Registered key {hashedKey} to id {id}");
+
+            return id;
+        }
+
+        private int RegisterNewUserKey(string hashedKey)
+        {
+            // Register a new id and key pair
+            int id = ++realmData.lastUserGivenId;
+            userKeys.Add(id, hashedKey);
+
+            // Add the new credentials to the user file
+            File.AppendAllLines(USER_FILE, new string[] { id + ":" + hashedKey });
 
             return id;
         }
@@ -355,6 +404,9 @@ namespace PhiServer
             // Add the key to the ban list
             bannedKeys.Add(key);
 
+            // Add the key to the ban file
+            File.WriteAllLines(ID_BAN_FILE, new string[] {key});
+
             // Find the connection for the newly banned user
             ServerClient client = connectedUsers.First(connectedUserPair => connectedUserPair.Value.id == id).Key;
 
@@ -368,7 +420,11 @@ namespace PhiServer
 
             if (bannedKeys.Contains(key))
             {
+                // Remove the key from the banned key list
                 bannedKeys.Remove(key);
+
+                // Remove the key from the banned key file
+                File.WriteAllLines(ID_BAN_FILE, File.ReadLines(ID_BAN_FILE).Where(line => line != key).ToList());
             }
         }
 
@@ -384,6 +440,9 @@ namespace PhiServer
             // Add the IP to the ban list
             bannedIPs.Add(ipAddress);
 
+            // Add the IP to the ban file
+            File.WriteAllLines(IP_BAN_FILE, new string[] {ipAddress.ToString()});
+
             // Disconnect any clients connected from the newly banned IP
             foreach (ServerClient client in connectedUsers.Keys)
             {
@@ -398,7 +457,11 @@ namespace PhiServer
         {
             if (bannedIPs.Contains(ipAddress))
             {
+                // Remove the IP from the banned IP list
                 bannedIPs.Remove(ipAddress);
+
+                // Remove the IP from the banned IP file
+                File.WriteAllLines(IP_BAN_FILE, File.ReadLines(IP_BAN_FILE).Where(line => line != ipAddress.ToString()).ToList());
             }
         }
 
