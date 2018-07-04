@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
-using SocketLibrary;
 using PhiClient;
-using System.Collections.Generic;
 using System.Collections;
 
 namespace PhiServer
@@ -11,7 +9,11 @@ namespace PhiServer
     {
         static void Main(string[] args)
         {
+            PhiServer server = new PhiServer(IPAddress.Any, 16180);
 
+            server.Start();
+
+            Console.Read();
         }
     }
 }
