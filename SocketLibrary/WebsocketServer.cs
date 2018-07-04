@@ -44,6 +44,12 @@ namespace SocketLibrary
             });
         }
 
+        public void Stop()
+        {
+            this.server.Stop();
+            this.server.RemoveWebSocketService("/");
+        }
+
         internal void ConnectionCallback(WebsocketServerConnection client)
         {
             this.clients.Add(client);
