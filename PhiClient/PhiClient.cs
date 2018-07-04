@@ -14,9 +14,11 @@ namespace PhiClient
 {
     public class PhiClient
     {
+        public static PhiClient instance;
+
         public PhiClient()
         {
-            
+            PhiClient.instance = this;
         }
     }
 }
