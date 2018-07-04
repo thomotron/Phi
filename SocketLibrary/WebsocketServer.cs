@@ -15,12 +15,11 @@ namespace SocketLibrary
         WebSocketServer server;
         List<WebsocketServerConnection> clients = new List<WebsocketServerConnection>();
         
-        public event Action<WebsocketServerConnection> Connection;
+        public event Action<WebsocketServerConnection> OnConnect;
+        public event Action<WebsocketServerConnection> OnDisconnect;
 
         public delegate void MessageHandler(WebsocketServerConnection client, byte[] data);
         public event MessageHandler Message;
-        
-        public event Action<WebsocketServerConnection> Disconnection;
 
         public WebsocketServer(IPAddress address, int port)
         {
@@ -54,7 +53,7 @@ namespace SocketLibrary
         {
             this.clients.Add(client);
 
-            this.Connection(client);
+            this.OnConnect(client);
         }
 
         internal void MessageCallback(WebsocketServerConnection client, byte[] data)
@@ -66,7 +65,7 @@ namespace SocketLibrary
         {
             this.clients.Remove(client);
 
-            this.Disconnection(client);
+            this.OnDisconnect(client);
         }
     }
 }

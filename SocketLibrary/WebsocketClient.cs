@@ -12,8 +12,8 @@ namespace SocketLibrary
 
         public event Action<byte[]> Message;
 
-        public event Action Connection;
-        public event Action Disconnection;
+        public event Action OnConnect;
+        public event Action OnDisconnect;
 
         public WebSocketState state
         {
@@ -53,12 +53,12 @@ namespace SocketLibrary
 
         private void OpenCallback(object sender, EventArgs e)
         {
-            this.Connection();
+            this.OnConnect();
         }
 
         private void CloseCallback(object sender, CloseEventArgs e)
         {
-            this.Disconnection();
+            this.OnDisconnect();
         }
 
         private void MessageCallback(object sender, MessageEventArgs e)
