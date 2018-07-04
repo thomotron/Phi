@@ -10,26 +10,26 @@ using System.Xml.Serialization;
 
 namespace SocketLibrary
 {
-    public class Server
+    public class WebsocketServer
     {
         WebSocketServer server;
-        List<ServerClient> clients = new List<ServerClient>();
+        List<WebsocketServerConnection> clients = new List<WebsocketServerConnection>();
         
-        public event Action<ServerClient> Connection;
+        public event Action<WebsocketServerConnection> Connection;
 
-        public delegate void MessageHandler(ServerClient client, byte[] data);
+        public delegate void MessageHandler(WebsocketServerConnection client, byte[] data);
         public event MessageHandler Message;
         
-        public event Action<ServerClient> Disconnection;
+        public event Action<WebsocketServerConnection> Disconnection;
 
-        public Server(IPAddress address, int port)
+        public WebsocketServer(IPAddress address, int port)
         {
             this.server = new WebSocketServer(address, port);
         }
 
         public void SendAll(string data)
         {
-            foreach (ServerClient client in this.clients)
+            foreach (WebsocketServerConnection client in this.clients)
             {
                 client.Send(data);
             }
@@ -38,25 +38,25 @@ namespace SocketLibrary
         public void Start()
         {
             this.server.Start();
-            this.server.AddWebSocketService<ServerClient>("/", () =>
+            this.server.AddWebSocketService<WebsocketServerConnection>("/", () =>
             {
-                return new ServerClient(this);
+                return new WebsocketServerConnection(this);
             });
         }
 
-        internal void ConnectionCallback(ServerClient client)
+        internal void ConnectionCallback(WebsocketServerConnection client)
         {
             this.clients.Add(client);
 
             this.Connection(client);
         }
 
-        internal void MessageCallback(ServerClient client, byte[] data)
+        internal void MessageCallback(WebsocketServerConnection client, byte[] data)
         {
             this.Message(client, data);
         }
 
-        internal void CloseCallback(ServerClient client)
+        internal void CloseCallback(WebsocketServerConnection client)
         {
             this.clients.Remove(client);
 

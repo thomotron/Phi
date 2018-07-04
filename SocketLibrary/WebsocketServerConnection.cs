@@ -9,11 +9,11 @@ namespace SocketLibrary
 {
 
 
-    public class ServerClient : WebSocketBehavior
+    public class WebsocketServerConnection : WebSocketBehavior
     {
-        Server server;
+        WebsocketServer server;
 
-        public ServerClient(Server server)
+        public WebsocketServerConnection(WebsocketServer server)
         {
             this.server = server;
         }

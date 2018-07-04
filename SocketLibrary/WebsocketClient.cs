@@ -6,7 +6,7 @@ using WebSocketSharp;
 
 namespace SocketLibrary
 {
-    public class Client
+    public class WebsocketClient
     {
         WebSocket client;
 
@@ -23,7 +23,7 @@ namespace SocketLibrary
             }
         }
 
-        public Client(string address, int port)
+        public WebsocketClient(string address, int port)
         {
             this.client = new WebSocket("ws://" + address + ":" + port + "/");
             this.client.OnMessage += this.MessageCallback;
