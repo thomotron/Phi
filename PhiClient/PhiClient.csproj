@@ -46,7 +46,7 @@
     <Compile Include="UI\Displayable.cs" />
     <Compile Include="PhiClient.cs" />
     <Compile Include="PhiInitializer.cs" />
-    <Compile Include="ServerMainMenuWindow.cs" />
+    <Compile Include="ServerConfigurationWindow.cs" />
     <Compile Include="ServerMainTab.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\ScrollContainer.cs" />
@@ -100,7 +100,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-<PostBuildEvent>For /F "Tokens=1,2*" %25%25A In ('Reg Query HKCU\SOFTWARE\Valve\Steam') Do ( If "%25%25A" Equ "SteamPath" Set "SPth=%25%25C" )
+    <PostBuildEvent>For /F "Tokens=1,2*" %25%25A In ('Reg Query HKCU\SOFTWARE\Valve\Steam') Do ( If "%25%25A" Equ "SteamPath" Set "SPth=%25%25C" )
 
 mkdir "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies"
 xcopy /Y /E "$(ProjectDir)PhiClient" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient"

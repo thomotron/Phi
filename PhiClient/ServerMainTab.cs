@@ -7,6 +7,8 @@ using Verse;
 using WebSocketSharp;
 using System;
 
+// TODO: Uncomment and refactor
+
 namespace PhiClient
 {
     public class ServerMainTab : MainTabWindow
@@ -53,14 +55,14 @@ namespace PhiClient
             PhiClient phi = PhiClient.instance;
 
             var cont = new ListContainer(ListFlow.COLUMN, ListDirection.OPPOSITE);
-
-            if (phi.IsUsable()) {
-                foreach (ChatMessage c in phi.realmData.chat.Reverse<ChatMessage>().Take(30))
-                {
-                    int idx = phi.realmData.users.LastIndexOf(c.user);
-                    cont.Add(new ButtonWidget(phi.realmData.users[idx].name + ": " + c.message, () => { OnUserClick(phi.realmData.users[idx]); }, false));
-                }
-            }
+//
+//            if (phi.IsUsable()) {
+//                foreach (ChatMessage c in phi.realmData.chat.Reverse<ChatMessage>().Take(30))
+//                {
+//                    int idx = phi.realmData.users.LastIndexOf(c.user);
+//                    cont.Add(new ButtonWidget(phi.realmData.users[idx].name + ": " + c.message, () => { OnUserClick(phi.realmData.users[idx]); }, false));
+//                }
+//            }
 
             return new ScrollContainer(cont, chatScroll, (v) => { chatScroll = v; });
         }
@@ -75,7 +77,7 @@ namespace PhiClient
             cont.spaceBetween = ListContainer.SPACE;
 
             string status = "Status: ";
-            switch (phi.client.state)
+            switch (phi.ClientState)
             {
                 case WebSocketState.Open:
                     status += "Connected";
@@ -98,29 +100,29 @@ namespace PhiClient
                 filterName = s;
             }), 150f, 30f));
 
-            if (phi.IsUsable())
-            {
-                ListContainer usersList = new ListContainer();
-                foreach (User user in phi.realmData.users.Where((u) => u.connected))
-                {
-                    if (filterName != "")
-                    {
-                        if (ContainsStringIgnoreCase(user.name, filterName))
-                            usersList.Add(new ButtonWidget(user.name, () => { OnUserClick(user); }, false));
-                    } else
-                    {
-                        usersList.Add(new ButtonWidget(user.name, () => { OnUserClick(user); }, false));
-                    }
-                }
-
-                cont.Add(new ScrollContainer(usersList, userScrollPosition, (v) => { userScrollPosition = v; }));
-            }
+//            if (phi.IsUsable())
+//            {
+//                ListContainer usersList = new ListContainer();
+//                foreach (User user in phi.realmData.users.Where((u) => u.connected))
+//                {
+//                    if (filterName != "")
+//                    {
+//                        if (ContainsStringIgnoreCase(user.name, filterName))
+//                            usersList.Add(new ButtonWidget(user.name, () => { OnUserClick(user); }, false));
+//                    } else
+//                    {
+//                        usersList.Add(new ButtonWidget(user.name, () => { OnUserClick(user); }, false));
+//                    }
+//                }
+//
+//                cont.Add(new ScrollContainer(usersList, userScrollPosition, (v) => { userScrollPosition = v; }));
+//            }
             return cont;
         }
 
         private void OnConfigurationClick()
         {
-            Find.WindowStack.Add(new ServerMainMenuWindow());
+            Find.WindowStack.Add(new ServerConfigurationWindow());
         }
 
         private System.Boolean ContainsStringIgnoreCase(string hay, string needle)
@@ -153,7 +155,7 @@ namespace PhiClient
             {
                 return;
             }
-            PhiClient.instance.SendMessage(this.enteredMessage);
+//            PhiClient.instance.SendMessage(this.enteredMessage);
             this.enteredMessage = "";
         }
 
@@ -165,62 +167,62 @@ namespace PhiClient
 
         public void OnReconnectClick()
         {
-            PhiClient.instance.TryConnect();
+            PhiClient.instance.Connect();
         }
 
-        public void OnUserClick(User user)
-        {
-            PhiClient phiClient = PhiClient.instance;
+//        public void OnUserClick(User user)
+//        {
+//            PhiClient phiClient = PhiClient.instance;
+//
+//            if (user != phiClient.currentUser || true)
+//            {
+//                List<FloatMenuOption> options = new List<FloatMenuOption>();
+//                options.Add(new FloatMenuOption("Ship items", () => { OnShipItemsOptionClick(user); }));
+//                options.Add(new FloatMenuOption("Send colonist", () => { OnSendColonistOptionClick(user); }));
+//                options.Add(new FloatMenuOption("Send animal", () => { OnSendAnimalOptionClick(user); }));
+//
+//                Find.WindowStack.Add(new FloatMenu(options));
+//            }
+//        }
 
-            if (user != phiClient.currentUser || true)
-            {
-                List<FloatMenuOption> options = new List<FloatMenuOption>();
-                options.Add(new FloatMenuOption("Ship items", () => { OnShipItemsOptionClick(user); }));
-                options.Add(new FloatMenuOption("Send colonist", () => { OnSendColonistOptionClick(user); }));
-                options.Add(new FloatMenuOption("Send animal", () => { OnSendAnimalOptionClick(user); }));
+//        public void OnSendColonistOptionClick(User user)
+//        {
+//            // We open a trade window with this user
+//            if (user.preferences.receiveColonists)
+//            {
+//                Find.WindowStack.Add(new UserSendColonistWindow(user));
+//            }
+//            else
+//            {
+//                Messages.Message(user.name + " does not accept colonists", MessageTypeDefOf.RejectInput);
+//            }
+//        }
 
-                Find.WindowStack.Add(new FloatMenu(options));
-            }
-        }
+//        public void OnSendAnimalOptionClick(User user)
+//        {
+//            // We open a trade window with this user
+//            if (user.preferences.receiveAnimals)
+//            {
+//                Find.WindowStack.Add(new UserSendAnimalWindow(user));
+//            }
+//            else
+//            {
+//                Messages.Message(user.name + " does not accept animals", MessageTypeDefOf.RejectInput);
+//            }
+//        }
 
-        public void OnSendColonistOptionClick(User user)
-        {
-            // We open a trade window with this user
-            if (user.preferences.receiveColonists)
-            {
-                Find.WindowStack.Add(new UserSendColonistWindow(user));
-            }
-            else
-            {
-                Messages.Message(user.name + " does not accept colonists", MessageTypeDefOf.RejectInput);
-            }
-        }
-
-        public void OnSendAnimalOptionClick(User user)
-        {
-            // We open a trade window with this user
-            if (user.preferences.receiveAnimals)
-            {
-                Find.WindowStack.Add(new UserSendAnimalWindow(user));
-            }
-            else
-            {
-                Messages.Message(user.name + " does not accept animals", MessageTypeDefOf.RejectInput);
-            }
-        }
-
-        public void OnShipItemsOptionClick(User user)
-        {
-            PhiClient phiClient = PhiClient.instance;
-            // We open a trade window with this user
-            if (user.preferences.receiveItems)
-            {
-                Find.WindowStack.Add(new UserGiveWindow(user));
-            }
-            else
-            {
-                Messages.Message(user.name + " does not accept items", MessageTypeDefOf.RejectInput);
-            }
-        }
+//        public void OnShipItemsOptionClick(User user)
+//        {
+//            PhiClient phiClient = PhiClient.instance;
+//            // We open a trade window with this user
+//            if (user.preferences.receiveItems)
+//            {
+//                Find.WindowStack.Add(new UserGiveWindow(user));
+//            }
+//            else
+//            {
+//                Messages.Message(user.name + " does not accept items", MessageTypeDefOf.RejectInput);
+//            }
+//        }
     }
 }

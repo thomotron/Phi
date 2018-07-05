@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Verse;
+using WebSocketSharp;
+
+// TODO: Uncomment and refactor
 
 namespace PhiClient
 {
-    class ServerMainMenuWindow : Window
+    class ServerConfigurationWindow : Window
     {
-        public ServerMainMenuWindow()
+        public ServerConfigurationWindow()
         {
             this.doCloseX = true;
             this.closeOnClickedOutside = true;
@@ -31,13 +34,13 @@ namespace PhiClient
 
             PhiClient client = PhiClient.instance;
 
-            this.enteredAddress = client.serverAddress;
+//            this.enteredAddress = client.GetServerAddress();
 
-            if (client.IsUsable())
-            {
-                OnUsableCallback();
-            }
-            client.OnUsable += OnUsableCallback;
+//            if (client.IsUsable())
+//            {
+//                OnUsableCallback();
+//            }
+//            client.OnUsable += OnUsableCallback;
         }
 
         public override void PostClose()
@@ -45,12 +48,12 @@ namespace PhiClient
             base.PostClose();
 
             PhiClient client = PhiClient.instance;
-            client.OnUsable -= OnUsableCallback;
+//            client.OnUsable -= OnUsableCallback;
         }
 
         void OnUsableCallback()
         {
-            this.wantedNickname = PhiClient.instance.currentUser.name;
+//            this.wantedNickname = PhiClient.instance.currentUser.name;
         }
 
         Vector2 scrollPosition = Vector2.zero;
@@ -63,10 +66,10 @@ namespace PhiClient
             cont.spaceBetween = ListContainer.SPACE;
             cont.Add(new HeightContainer(DoHeader(), 30f));
 
-            if (client.IsUsable())
-            {
-                cont.Add(DoConnectedContent());
-            }
+//            if (client.IsUsable())
+//            {
+//                cont.Add(DoConnectedContent());
+//            }
 
             cont.Draw(inRect);
         }
@@ -79,9 +82,9 @@ namespace PhiClient
             ListContainer cont = new ListContainer(ListFlow.ROW);
             cont.spaceBetween = ListContainer.SPACE;
 
-            if (client.IsUsable())
+            if (client.ClientState == WebSocketState.Open)
             {
-                cont.Add(new TextWidget("Connected to " + client.serverAddress, GameFont.Small, TextAnchor.MiddleLeft));
+                cont.Add(new TextWidget("Connected to " + client.ServerAddress, GameFont.Small, TextAnchor.MiddleLeft));
                 cont.Add(new WidthContainer(new ButtonWidget("Disconnect", () => { OnDisconnectButtonClick(); }), 140f));
             }
             else
@@ -114,7 +117,7 @@ namespace PhiClient
             /**
              * Preferences list
              */
-            UserPreferences pref = client.currentUser.preferences;
+//            UserPreferences pref = client.currentUser.preferences;
             ListContainer twoColumn = new ListContainer(ListFlow.ROW);
             twoColumn.spaceBetween = ListContainer.SPACE;
             mainCont.Add(twoColumn);
@@ -122,23 +125,23 @@ namespace PhiClient
             ListContainer firstColumn = new ListContainer();
             twoColumn.Add(firstColumn);
 
-            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving items", pref.receiveItems, (b) =>
-            {
-                pref.receiveItems = b;
-                client.UpdatePreferences();
-            }));
-
-            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving colonists (EXPERIMENTAL)", pref.receiveColonists, (b) =>
-            {
-                pref.receiveColonists = b;
-                client.UpdatePreferences();
-            }));
-
-            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving animals (EXPERIMENTAL)", pref.receiveAnimals, (b) =>
-            {
-                pref.receiveAnimals = b;
-                client.UpdatePreferences();
-            }));
+//            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving items", pref.receiveItems, (b) =>
+//            {
+//                pref.receiveItems = b;
+//                client.UpdatePreferences();
+//            }));
+//
+//            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving colonists (EXPERIMENTAL)", pref.receiveColonists, (b) =>
+//            {
+//                pref.receiveColonists = b;
+//                client.UpdatePreferences();
+//            }));
+//
+//            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving animals (EXPERIMENTAL)", pref.receiveAnimals, (b) =>
+//            {
+//                pref.receiveAnimals = b;
+//                client.UpdatePreferences();
+//            }));
 
             // Just to take spaces while the column is empty
             ListContainer secondColumn = new ListContainer();
@@ -157,8 +160,8 @@ namespace PhiClient
         {
             PhiClient client = PhiClient.instance;
 
-            client.SetServerAddress(enteredAddress.Trim());
-            client.TryConnect();
+//            client.SetServerAddress(enteredAddress.Trim());
+            client.Connect();
         }
 
         public void OnDisconnectButtonClick()
@@ -168,7 +171,7 @@ namespace PhiClient
 
         void OnChangeNicknameClick()
         {
-            PhiClient.instance.ChangeNickname(wantedNickname);
+//            PhiClient.instance.ChangeNickname(wantedNickname);
         }
     }
 }

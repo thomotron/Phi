@@ -6,20 +6,22 @@ using System.Text;
 using UnityEngine;
 using Verse;
 
+// TODO: Uncomment and refactor
+
 namespace PhiClient
 {
     class UserSendColonistWindow : Window
     {
-        User user;
+//        User user;
         Vector2 scrollPosition = Vector2.zero;
 
-        public UserSendColonistWindow(User user)
-        {
-            this.user = user;
-            this.doCloseX = true;
-            this.closeOnClickedOutside = true;
-            this.closeOnEscapeKey = true;
-        }
+//        public UserSendColonistWindow(User user)
+//        {
+//            this.user = user;
+//            this.doCloseX = true;
+//            this.closeOnClickedOutside = true;
+//            this.closeOnEscapeKey = true;
+//        }
 
         public override void DoWindowContents(Rect inRect)
         {
@@ -48,7 +50,7 @@ namespace PhiClient
         public void OnColonistClick(Pawn pawn)
         {
             PhiClient client = PhiClient.instance;
-            client.SendPawn(user, pawn);
+//            client.SendPawn(user, pawn);
         }
     }
 }

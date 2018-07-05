@@ -7,6 +7,8 @@ using Verse;
 using RimWorld;
 using PhiClient.UI;
 
+// TODO: Uncomment and refactor
+
 namespace PhiClient
 {
     class UserGiveWindow : Window
@@ -21,7 +23,7 @@ namespace PhiClient
         // we simply need the check canStackWith the first element of a sub-list
         List<List<Thing>> inventory = new List<List<Thing>>();
         Dictionary<List<Thing>, int> chosenThings = new Dictionary<List<Thing>, int>();
-        User user;
+//        User user;
         Vector2 scrollPosition = Vector2.zero;
 
         string filterTerm = "";
@@ -35,13 +37,13 @@ namespace PhiClient
             }
         }
 
-        public UserGiveWindow(User user)
-        {
-            this.user = user;
-            this.closeOnClickedOutside = true;
-            this.doCloseX = true;
-            this.closeOnEscapeKey = true;
-        }
+//        public UserGiveWindow(User user)
+//        {
+//            this.user = user;
+//            this.closeOnClickedOutside = true;
+//            this.doCloseX = true;
+//            this.closeOnEscapeKey = true;
+//        }
 
         public void CountItems()
         {
@@ -106,7 +108,7 @@ namespace PhiClient
             mainCont.spaceBetween = ListContainer.SPACE;
 
             // Title
-            mainCont.Add(new TextWidget("Ship to " + this.user.name, GameFont.Medium, TextAnchor.MiddleCenter));
+//            mainCont.Add(new TextWidget("Ship to " + this.user.name, GameFont.Medium, TextAnchor.MiddleCenter));
             
             /**
              * Draw the search input
@@ -199,12 +201,12 @@ namespace PhiClient
 
         public void OnSendClick()
         {
-            bool success = PhiClient.instance.SendThings(this.user, chosenThings);
+//            bool success = PhiClient.instance.SendThings(this.user, chosenThings);
 
-            if (success)
-            {
-                Close();
-            }
+//            if (success)
+//            {
+//                Close();
+//            }
         }
     }
 }
