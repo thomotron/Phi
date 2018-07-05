@@ -10,8 +10,9 @@ namespace PhiClient
     {
         public PhiInitializer()
         {
+            // Initialise the first instance of the client
             PhiClient client = new PhiClient();
-            client.TryConnect();
+            client.Connect();
 
             // We use this as an entry to the main thread of the game.
             // Since the whole network layer receives messages in a different thread
