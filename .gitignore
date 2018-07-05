@@ -211,3 +211,7 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /PhiClient/PhiClient/Assemblies
+
+# RimWorld assemblies
+ExternPackages/Assembly-CSharp.dll
+ExternPackages/UnityEngine.dll

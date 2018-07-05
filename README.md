@@ -23,3 +23,8 @@ Used by PhiClient and PhiServer.
 ### SocketLibrary
 A wrapper library around websocket-sharp.
 Used by PhiClient and PhiServer.
+
+## Building
+Previously game data .dlls were included in the ExternPackages folder. They have since been removed from the repository, but are still required by the project.
+
+To work around this, copy both Assembly-CSharp.dll and UnityEngine.dll from your Rimworld data folder into the ExternPackages folder. The project still references their location, so simply placing them in that folder should be enough.
