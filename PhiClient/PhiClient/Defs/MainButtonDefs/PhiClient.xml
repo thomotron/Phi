@@ -3,7 +3,7 @@
   <MainButtonDef>
     <defName>Server</defName>
     <label>server</label>
-    <description>Check the status of the </description>
+    <description>Check the status of the server</description>
     <tabWindowClass>PhiClient.ServerMainTab</tabWindowClass>
     <order>100</order>
     <defaultHotKey>F12</defaultHotKey>
