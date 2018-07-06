@@ -49,7 +49,7 @@ namespace PhiClient
 
         public void OnColonistClick(Pawn pawn)
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 //            client.SendPawn(user, pawn);
         }
     }

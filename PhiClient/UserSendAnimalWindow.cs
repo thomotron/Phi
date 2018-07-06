@@ -50,7 +50,7 @@ namespace PhiClient
 
         public void OnAnimalClick(Pawn pawn)
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 //            client.SendAnimal(user, pawn);
         }
     }

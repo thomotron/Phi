@@ -12,8 +12,8 @@ namespace PhiClient
 {
     public class PhiClient
     {
-        public static PhiClient instance;
 
+        public static PhiClient Instance;
         public WebSocketState ClientState => client.state;
 
         private WebsocketClient client;
@@ -46,7 +46,8 @@ namespace PhiClient
         /// </summary>
         public PhiClient()
         {
-            PhiClient.instance = this;
+            // Set this as the static instance
+            PhiClient.Instance = this;
         }
 
         /// <summary>

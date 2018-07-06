@@ -28,7 +28,7 @@ namespace PhiClient
         {
             base.DoWindowContents(inRect);
 
-            PhiClient phi = PhiClient.instance;
+            PhiClient phi = PhiClient.Instance;
 
             ListContainer mainList = new ListContainer();
             mainList.spaceBetween = ListContainer.SPACE;
@@ -52,7 +52,7 @@ namespace PhiClient
 
         private Displayable DoChat()
         {
-            PhiClient phi = PhiClient.instance;
+            PhiClient phi = PhiClient.Instance;
 
             var cont = new ListContainer(ListFlow.COLUMN, ListDirection.OPPOSITE);
 //
@@ -71,7 +71,7 @@ namespace PhiClient
 
         private Displayable DoBodyRightBar()
         {
-            PhiClient phi = PhiClient.instance;
+            PhiClient phi = PhiClient.Instance;
 
             ListContainer cont = new ListContainer();
             cont.spaceBetween = ListContainer.SPACE;
@@ -167,7 +167,7 @@ namespace PhiClient
 
         public void OnReconnectClick()
         {
-            PhiClient.instance.Connect();
+            PhiClient.Instance.Connect();
         }
 
 //        public void OnUserClick(User user)

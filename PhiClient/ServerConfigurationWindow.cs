@@ -32,7 +32,7 @@ namespace PhiClient
         {
             base.PreOpen();
 
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 
 //            this.enteredAddress = client.GetServerAddress();
 
@@ -47,7 +47,7 @@ namespace PhiClient
         {
             base.PostClose();
 
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 //            client.OnUsable -= OnUsableCallback;
         }
 
@@ -60,7 +60,7 @@ namespace PhiClient
 
         public override void DoWindowContents(Rect inRect)
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 
             ListContainer cont = new ListContainer();
             cont.spaceBetween = ListContainer.SPACE;
@@ -78,7 +78,7 @@ namespace PhiClient
 
         public Displayable DoHeader()
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
             ListContainer cont = new ListContainer(ListFlow.ROW);
             cont.spaceBetween = ListContainer.SPACE;
 
@@ -100,7 +100,7 @@ namespace PhiClient
 
         public Displayable DoConnectedContent()
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
             ListContainer mainCont = new ListContainer();
             mainCont.spaceBetween = ListContainer.SPACE;
 
@@ -158,7 +158,7 @@ namespace PhiClient
 
         public void OnConnectButtonClick()
         {
-            PhiClient client = PhiClient.instance;
+            PhiClient client = PhiClient.Instance;
 
 //            client.SetServerAddress(enteredAddress.Trim());
             client.Connect();
@@ -166,7 +166,7 @@ namespace PhiClient
 
         public void OnDisconnectButtonClick()
         {
-            PhiClient.instance.Disconnect();
+            PhiClient.Instance.Disconnect();
         }
 
         void OnChangeNicknameClick()
