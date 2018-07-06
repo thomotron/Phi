@@ -71,9 +71,6 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\ExternPackages\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Community Core Library">
-      <HintPath>..\ExternPackages\Community Core Library.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

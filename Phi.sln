@@ -19,7 +19,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternPackages", "ExternPackages", "{BCFE3D5F-CF42-4727-B9F9-5F20A04CCA19}"
 	ProjectSection(SolutionItems) = preProject
 		ExternPackages\Assembly-CSharp.dll = ExternPackages\Assembly-CSharp.dll
-		ExternPackages\Community Core Library.dll = ExternPackages\Community Core Library.dll
 		ExternPackages\UnityEngine.dll = ExternPackages\UnityEngine.dll
 	EndProjectSection
 EndProject
