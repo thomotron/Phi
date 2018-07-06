@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="Assembly-CSharp">
       <HintPath>..\ExternPackages\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\ExternPackages\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
