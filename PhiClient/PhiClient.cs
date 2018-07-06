@@ -48,12 +48,20 @@ namespace PhiClient
             );
         }
 
+        /// <summary>
+        /// Called when the mod is first initialised.
+        /// Used to set up the first instance.
+        /// </summary>
         public override void Initialize()
         {
             PhiClient phiClient = new PhiClient();
             phiClient.Connect();
         }
         
+        /// <summary>
+        /// Called by Unity at a set interval.
+        /// Used to keep the client in sync and process any incoming messages.
+        /// </summary>
         public override void FixedUpdate()
         {
             throw new NotImplementedException();
