@@ -45,7 +45,6 @@
     <Compile Include="UI\ListContainer.cs" />
     <Compile Include="UI\Displayable.cs" />
     <Compile Include="PhiClient.cs" />
-    <Compile Include="PhiInitializer.cs" />
     <Compile Include="ServerConfigurationWindow.cs" />
     <Compile Include="ServerMainTab.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +59,17 @@
     <Compile Include="UserSendColonistWindow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="%24HugsLibChecker, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UnlimitedHugs.Rimworld.HugsLibChecker.5.0.0\lib\net35\$HugsLibChecker.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UnlimitedHugs.Rimworld.HugsLib.5.0.0\lib\net35\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HugsLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UnlimitedHugs.Rimworld.HugsLib.5.0.0\lib\net35\HugsLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="websocket-sharp">
@@ -92,7 +102,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="PhiClient\Defs\MainButtonDefs\PhiClient.xml" />
-    <Content Include="PhiClient\Defs\ThingDefs\PhiClient.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PhiClient\Assemblies\" />
@@ -104,6 +113,7 @@
 mkdir "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies"
 xcopy /Y /E "$(ProjectDir)PhiClient" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient"
 copy /Y "$(TargetDir)PhiClient.dll" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies\PhiClient.dll"
+copy /Y "$(TargetDir)$HugsLibChecker.dll" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies\0-HugsLibChecker.dll"
 copy /Y "$(TargetDir)websocket-sharp.dll" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies\1-websocket-sharp.dll"
 copy /Y "$(TargetDir)SocketLibrary.dll" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies\2-SocketLibrary.dll"
 copy /Y "$(TargetDir)PhiData.dll" "%25SPth%25\steamapps\common\RimWorld\Mods\PhiClient\Assemblies\3-PhiData.dll"

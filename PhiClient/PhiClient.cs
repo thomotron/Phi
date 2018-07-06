@@ -6,40 +6,23 @@ using Verse;
 using RimWorld;
 using System.Text;
 using System.Collections;
+using HugsLib.Settings;
 using WebSocketSharp;
 
 namespace PhiClient
 {
-    public class PhiClient
+    public class PhiClient : HugsLib.ModBase
     {
-
+        public override string ModIdentifier => "PhiClient";
+        
         public static PhiClient Instance;
         public WebSocketState ClientState => client.state;
 
         private WebsocketClient client;
-        private ConfigManager config = new ConfigManager("phi.dat");
-
-        public string ServerAddress => serverAddress;
-        private string serverAddress
-        {
-            get
-            {
-                if (config.TryGetValue("ServerAddress", out string address)) return address;
-                else return ConnectionDefaults.DEFAULT_SERVER_ADDRESS;
-            }
-            set => config.SetValue("ServerAddress", value);
-        }
-
-        public int ServerPort => serverPort;
-        private int serverPort
-        {
-            get
-            {
-                if (config.TryGetValue("ServerPort", out int address)) return address;
-                else return ConnectionDefaults.DEFAULT_SERVER_PORT;
-            }
-            set => config.SetValue("ServerPort", value);
-        }
+        private SettingHandle<string> serverAddressHandle;
+        public string ServerAddress => serverAddressHandle;
+        private SettingHandle<int> serverPortHandle;
+        public int ServerPort => serverPortHandle;
 
         /// <summary>
         /// Instantiate a new <c>PhiClient</c> object and update the <c>PhiClient.instance</c> property.
@@ -48,12 +31,30 @@ namespace PhiClient
         {
             // Set this as the static instance
             PhiClient.Instance = this;
+
+            // Load in settings
+            serverAddressHandle = Settings.GetHandle(
+                settingName: "serverAddress",
+                title: "Server Address",
+                description: null,
+                defaultValue: ConnectionDefaults.DEFAULT_SERVER_ADDRESS
+            );
+            serverPortHandle = Settings.GetHandle(
+                settingName: "serverPort",
+                title: "Server Port",
+                description: null,
+                defaultValue: ConnectionDefaults.DEFAULT_SERVER_PORT,
+                validator: value => int.TryParse(value, out _)
+            );
         }
 
-        /// <summary>
-        /// Hook called by Unity every tick.
-        /// </summary>
-        public void OnUpdate()
+        public override void Initialize()
+        {
+            PhiClient phiClient = new PhiClient();
+            phiClient.Connect();
+        }
+        
+        public override void FixedUpdate()
         {
             throw new NotImplementedException();
         }
@@ -67,7 +68,7 @@ namespace PhiClient
             Disconnect();
 
             // Set up a new client
-            client = new WebsocketClient(serverAddress, serverPort);
+            client = new WebsocketClient(ServerAddress, ServerPort);
             client.OnConnect += OnConnect;
             client.OnDisconnect += OnDisconnect;
             client.Message += OnMessage;

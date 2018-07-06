@@ -17,7 +17,6 @@ namespace PhiClient
         {
             this.doCloseX = true;
             this.closeOnClickedOutside = true;
-            this.closeOnEscapeKey = true;
         }
 
         public override Vector2 InitialSize

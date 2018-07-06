@@ -36,7 +36,7 @@ namespace PhiClient
             mainCont.Add(new ScrollContainer(columnCont, scrollPosition, (s) => { scrollPosition = s; }));
 
             float beginY = 0f; //Unused
-            foreach (Pawn colonist in Find.VisibleMap.mapPawns.FreeColonists)
+            foreach (Pawn colonist in Find.CurrentMap.mapPawns.FreeColonists)
             {
                 ListContainer rowCont = new ListContainer(ListFlow.ROW);
                 rowCont.spaceBetween = ListContainer.SPACE;

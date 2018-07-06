@@ -24,7 +24,6 @@ namespace PhiClient.Legacy
             this.config = config;
             this.forcePause = true;
             this.absorbInputAroundWindow = true;
-            this.closeOnEscapeKey = false;
             if (config.buttonAAction == null)
             {
                 config.buttonAText = "OK".Translate();

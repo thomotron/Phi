@@ -30,7 +30,7 @@ namespace PhiClient.UI
         {
             // We draw the top with tabs
             Rect tabsArea = inRect.TopPartPixels(TAB_HEIGHT);
-            TabDrawer.DrawTabs(tabsArea, tabs.Select((e) => e.tab));
+            TabDrawer.DrawTabs(tabsArea, tabs.Select((e) => e.tab).ToList());
 
             // We draw the selected tab
             Rect childArea = inRect.BottomPartPixels(inRect.height - TAB_HEIGHT);
