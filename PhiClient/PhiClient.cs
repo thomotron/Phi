@@ -19,10 +19,19 @@ namespace PhiClient
         public WebSocketState ClientState => client.state;
 
         private WebsocketClient client;
+
         private SettingHandle<string> serverAddressHandle;
-        public string ServerAddress => serverAddressHandle;
+        public string ServerAddress
+        {
+            get => serverAddressHandle.Value;
+            set => serverAddressHandle.Value = value;
+        }
         private SettingHandle<int> serverPortHandle;
-        public int ServerPort => serverPortHandle;
+        public int ServerPort
+        {
+            get => serverPortHandle.Value;
+            set => serverPortHandle.Value = value;
+        }
 
         /// <summary>
         /// Instantiate a new <c>PhiClient</c> object and update the <c>PhiClient.instance</c> property.
