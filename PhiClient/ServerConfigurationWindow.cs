@@ -19,21 +19,17 @@ namespace PhiClient
             this.closeOnClickedOutside = true;
         }
 
-        public override Vector2 InitialSize
-        {
-            get
-            {
-                return new Vector2(700, 700);
-            }
-        }
+        public override Vector2 InitialSize => new Vector2(700, 700);
 
         public override void PreOpen()
         {
             base.PreOpen();
 
+            // Get a local copy of the current client instance
             PhiClient client = PhiClient.Instance;
 
-//            this.enteredAddress = client.GetServerAddress();
+            // Get the server address
+            this.enteredAddress = client.ServerAddress;
 
 //            if (client.IsUsable())
 //            {
@@ -45,8 +41,8 @@ namespace PhiClient
         public override void PostClose()
         {
             base.PostClose();
-
-            PhiClient client = PhiClient.Instance;
+            
+//            PhiClient client = PhiClient.Instance;
 //            client.OnUsable -= OnUsableCallback;
         }
 
@@ -55,74 +51,88 @@ namespace PhiClient
 //            this.wantedNickname = PhiClient.instance.currentUser.name;
         }
 
-        Vector2 scrollPosition = Vector2.zero;
-
         public override void DoWindowContents(Rect inRect)
         {
-            PhiClient client = PhiClient.Instance;
+            // Get a local copy of the current client instance
+            PhiClient instance = PhiClient.Instance;
 
-            ListContainer cont = new ListContainer();
-            cont.spaceBetween = ListContainer.SPACE;
-            cont.Add(new HeightContainer(DoHeader(), 30f));
+            // Initialise a new container for the settings window
+            ListContainer cont = new ListContainer
+            {
+                spaceBetween = ListContainer.SPACE
+            };
 
-//            if (client.IsUsable())
-//            {
-//                cont.Add(DoConnectedContent());
-//            }
+            // Add the address box and connect/disconnect button
+            cont.Add(new HeightContainer(DoHeader(instance), 30f));
 
+            if (instance.IsLoggedIn)
+            {
+                // Add trade preferences and other server-specific elements
+                cont.Add(DoConnectedContent(instance));
+            }
+
+            // Draw the window contents
             cont.Draw(inRect);
         }
 
         string enteredAddress = "";
 
-        public Displayable DoHeader()
+        public Displayable DoHeader(PhiClient instance)
         {
-            PhiClient client = PhiClient.Instance;
-            ListContainer cont = new ListContainer(ListFlow.ROW);
-            cont.spaceBetween = ListContainer.SPACE;
-
-            if (client.ClientState == WebSocketState.Open)
+            // Initialise a container for address box and connect/disconnect button
+            ListContainer cont = new ListContainer(ListFlow.ROW)
             {
-                cont.Add(new TextWidget("Connected to " + client.ServerAddress, GameFont.Small, TextAnchor.MiddleLeft));
+                spaceBetween = ListContainer.SPACE
+            };
+            
+            if (instance.ConnectionState == WebSocketState.Open)
+            {
+                // Add a non-editable field displaying the currently connected address followed by a disconnect button
+                cont.Add(new TextWidget("Connected to " + instance.ServerAddress, GameFont.Small, TextAnchor.MiddleLeft));
                 cont.Add(new WidthContainer(new ButtonWidget("Disconnect", () => { OnDisconnectButtonClick(); }), 140f));
             }
             else
             {
+                // Add an editable field with the last address and a connect button
                 cont.Add(new TextFieldWidget(enteredAddress, (s) => { enteredAddress = s; }));
                 cont.Add(new WidthContainer(new ButtonWidget("Connect", () => { OnConnectButtonClick(); }), 140f));
             }
 
+            // Return the constructed header
             return cont;
         }
 
         string wantedNickname;
 
-        public Displayable DoConnectedContent()
+        public Displayable DoConnectedContent(PhiClient instance)
         {
-            PhiClient client = PhiClient.Instance;
-            ListContainer mainCont = new ListContainer();
-            mainCont.spaceBetween = ListContainer.SPACE;
+            // Initialise a new container for server-specific content
+            ListContainer mainCont = new ListContainer
+            {
+                spaceBetween = ListContainer.SPACE
+            };
 
-            /**
-             * Changing your nickname
-             */
-            ListContainer changeNickCont = new ListContainer(ListFlow.ROW);
-            changeNickCont.spaceBetween = ListContainer.SPACE;
-            mainCont.Add(new HeightContainer(changeNickCont, 30f));
-            
-            changeNickCont.Add(new TextFieldWidget(wantedNickname, (s) => wantedNickname = OnWantedNicknameChange(s)));
+            // Initialise a container for nickname box and submit button
+            ListContainer changeNickCont = new ListContainer(ListFlow.ROW)
+            {
+                spaceBetween = ListContainer.SPACE
+            };
+
+            // Add an editable nickname field and submit button to the container
+            changeNickCont.Add(new TextFieldWidget(wantedNickname, null));
             changeNickCont.Add(new WidthContainer(new ButtonWidget("Change nickname", OnChangeNicknameClick), 140f));
 
-            /**
-             * Preferences list
-             */
-//            UserPreferences pref = client.currentUser.preferences;
-            ListContainer twoColumn = new ListContainer(ListFlow.ROW);
-            twoColumn.spaceBetween = ListContainer.SPACE;
-            mainCont.Add(twoColumn);
+            // Add the nickname container to the server-specific content container
+            mainCont.Add(new HeightContainer(changeNickCont, 30f));
 
-            ListContainer firstColumn = new ListContainer();
-            twoColumn.Add(firstColumn);
+
+//            UserPreferences pref = client.currentUser.preferences;
+//            ListContainer twoColumn = new ListContainer(ListFlow.ROW);
+//            twoColumn.spaceBetween = ListContainer.SPACE;
+//            mainCont.Add(twoColumn);
+//
+//            ListContainer firstColumn = new ListContainer();
+//            twoColumn.Add(firstColumn);
 
 //            firstColumn.Add(new CheckboxLabeledWidget("Allow receiving items", pref.receiveItems, (b) =>
 //            {
@@ -142,25 +152,18 @@ namespace PhiClient
 //                client.UpdatePreferences();
 //            }));
 
-            // Just to take spaces while the column is empty
-            ListContainer secondColumn = new ListContainer();
-            twoColumn.Add(secondColumn);
+//            // Just to take spaces while the column is empty
+//            ListContainer secondColumn = new ListContainer();
+//            twoColumn.Add(secondColumn);
 
+            // Return the constructed container
             return mainCont;
-        }
-
-        public string OnWantedNicknameChange(string newNickname)
-        {
-            // TODO: Limit the length of the nickname right in the interface
-            return newNickname;
         }
 
         public void OnConnectButtonClick()
         {
-            PhiClient client = PhiClient.Instance;
-
-//            client.SetServerAddress(enteredAddress.Trim());
-            client.Connect();
+            PhiClient.Instance.ServerAddress = enteredAddress.Trim();
+            PhiClient.Instance.Connect();
         }
 
         public void OnDisconnectButtonClick()

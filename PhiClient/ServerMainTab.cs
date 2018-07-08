@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using WebSocketSharp;
 using System;
+using System.Runtime.Remoting.Messaging;
 
 // TODO: Uncomment and refactor
 
@@ -26,58 +27,70 @@ namespace PhiClient
 
         public override void DoWindowContents(Rect inRect)
         {
+            // Draw the backing panel
             base.DoWindowContents(inRect);
 
+            // Get a local copy of the current Phi instance
             PhiClient phi = PhiClient.Instance;
 
-            ListContainer mainList = new ListContainer();
-            mainList.spaceBetween = ListContainer.SPACE;
+            // Initialise a container for the panel contents
+            ListContainer mainList = new ListContainer
+            {
+                spaceBetween = ListContainer.SPACE
+            };
 
+            // Add a title to the panel content container
             mainList.Add(new TextWidget("Realm", GameFont.Medium, TextAnchor.MiddleCenter));
 
-            ListContainer rowBodyContainer = new ListContainer(new List<Displayable>()
+            // Initialise a body container for the chat panel and status column
+            ListContainer rowBodyContainer = new ListContainer(new List<Displayable>
             {
-                DoChat(),
-                new WidthContainer(DoBodyRightBar(), STATUS_AREA_WIDTH)
+                DoChat(phi),
+                new WidthContainer(DoStatusArea(phi), STATUS_AREA_WIDTH)
             }, ListFlow.ROW);
             rowBodyContainer.spaceBetween = ListContainer.SPACE;
 
+            // Add the body container to the panel content container
             mainList.Add(rowBodyContainer);
+
+            // Add the chat entry bar to the panel content container
             mainList.Add(new HeightContainer(DoFooter(), 30f));
 
+            // Draw the panel contents
             mainList.Draw(inRect);
         }
 
         Vector2 chatScroll = Vector2.zero;
 
-        private Displayable DoChat()
+        private Displayable DoChat(PhiClient instance)
         {
-            PhiClient phi = PhiClient.Instance;
-
+            // Initialise a container for chat messages
             var cont = new ListContainer(ListFlow.COLUMN, ListDirection.OPPOSITE);
-//
-//            if (phi.IsUsable()) {
-//                foreach (ChatMessage c in phi.realmData.chat.Reverse<ChatMessage>().Take(30))
-//                {
-//                    int idx = phi.realmData.users.LastIndexOf(c.user);
-//                    cont.Add(new ButtonWidget(phi.realmData.users[idx].name + ": " + c.message, () => { OnUserClick(phi.realmData.users[idx]); }, false));
-//                }
-//            }
 
+            if (instance.IsLoggedIn) {
+//                foreach (ChatMessage c in instance.realmData.chat.Reverse<ChatMessage>().Take(30))
+//                {
+//                    int idx = instance.realmData.users.LastIndexOf(c.user);
+//                    cont.Add(new ButtonWidget(instance.realmData.users[idx].name + ": " + c.message, () => { OnUserClick(instance.realmData.users[idx]); }, false));
+//                }
+            }
+            
+            // Return a new chat list scrolled to the previously scrolled position
+            // Any further scrolling will update the chatScroll property
             return new ScrollContainer(cont, chatScroll, (v) => { chatScroll = v; });
         }
 
         Vector2 userScrollPosition = Vector2.zero;
 
-        private Displayable DoBodyRightBar()
+        private Displayable DoStatusArea(PhiClient instance)
         {
-            PhiClient phi = PhiClient.Instance;
-
+            // Initialise a new container for the column
             ListContainer cont = new ListContainer();
             cont.spaceBetween = ListContainer.SPACE;
 
+            // Get the connection status
             string status = "Status: ";
-            switch (phi.ClientState)
+            switch (instance.ConnectionState)
             {
                 case WebSocketState.Open:
                     status += "Connected";
@@ -92,18 +105,23 @@ namespace PhiClient
                     status += "Disconnecting";
                     break;
             }
+
+            // Add the status to the top of the column
             cont.Add(new TextWidget(status));
 
+            // Add a configuration button to the column
             cont.Add(new HeightContainer(new ButtonWidget("Configuration", () => { OnConfigurationClick(); }), 30f));
 
+            // Add a search bar to the column
             cont.Add(new Container(new TextFieldWidget(filterName, (s) => {
                 filterName = s;
             }), 150f, 30f));
 
-//            if (phi.IsUsable())
-//            {
-//                ListContainer usersList = new ListContainer();
-//                foreach (User user in phi.realmData.users.Where((u) => u.connected))
+            if (instance.IsLoggedIn)
+            {
+                // Initialise a container for the user list
+                ListContainer usersList = new ListContainer();
+//                foreach (User user in instance.realmData.users.Where((u) => u.connected))
 //                {
 //                    if (filterName != "")
 //                    {
@@ -114,9 +132,13 @@ namespace PhiClient
 //                        usersList.Add(new ButtonWidget(user.name, () => { OnUserClick(user); }, false));
 //                    }
 //                }
-//
-//                cont.Add(new ScrollContainer(usersList, userScrollPosition, (v) => { userScrollPosition = v; }));
-//            }
+
+                // Add the user list container to the column scrolled to the previously scrolled position
+                // Any further scrolling will update the userScrollPosition property
+                cont.Add(new ScrollContainer(usersList, userScrollPosition, (v) => { userScrollPosition = v; }));
+            }
+
+            // Return the assembled status area
             return cont;
         }
 
@@ -125,26 +147,31 @@ namespace PhiClient
             Find.WindowStack.Add(new ServerConfigurationWindow());
         }
 
-        private System.Boolean ContainsStringIgnoreCase(string hay, string needle)
+        private bool ContainsStringIgnoreCase(string hay, string needle)
         {
-            return hay.IndexOf(needle, System.StringComparison.OrdinalIgnoreCase) >= 0;
+            return hay.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private Displayable DoFooter()
         {
-            ListContainer footerList = new ListContainer(ListFlow.ROW);
-            footerList.spaceBetween = ListContainer.SPACE;
+            // Initialise a footer container
+            ListContainer footerList = new ListContainer(ListFlow.ROW)
+            {
+                spaceBetween = ListContainer.SPACE
+            };
 
-            // Enter shorcut
-            if(Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return))
+            // Enter shortcut
+            if (Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.KeypadEnter || Event.current.keyCode == KeyCode.Return))
             {
                 OnSendClick();
                 Event.current.Use();
             }
 
-            footerList.Add(new TextFieldWidget(enteredMessage, (s) => { enteredMessage = OnEnteredMessageChange(s); }));
+            // Add a textbox and send button
+            footerList.Add(new TextFieldWidget(enteredMessage, s => enteredMessage = s));
             footerList.Add(new WidthContainer(new ButtonWidget("Send", OnSendClick), CHAT_INPUT_SEND_BUTTON_WIDTH));
             
+            // Return the constructed footer
             return footerList;
         }
 
@@ -157,17 +184,6 @@ namespace PhiClient
             }
 //            PhiClient.instance.SendMessage(this.enteredMessage);
             this.enteredMessage = "";
-        }
-
-        public string OnEnteredMessageChange(string newMessage)
-        {
-            // TODO: Limit the length of the message right in the interface
-            return newMessage;
-        }
-
-        public void OnReconnectClick()
-        {
-            PhiClient.Instance.Connect();
         }
 
 //        public void OnUserClick(User user)

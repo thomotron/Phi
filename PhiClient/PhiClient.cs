@@ -16,7 +16,8 @@ namespace PhiClient
         public override string ModIdentifier => "PhiClient";
         
         public static PhiClient Instance;
-        public WebSocketState ClientState => client.state;
+        public WebSocketState ConnectionState => client.state;
+        public bool IsLoggedIn = false;
 
         private WebsocketClient client;
 
