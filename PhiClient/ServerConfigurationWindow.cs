@@ -28,8 +28,9 @@ namespace PhiClient
             // Get a local copy of the current client instance
             PhiClient client = PhiClient.Instance;
 
-            // Get the server address
+            // Get the server address and port
             this.enteredAddress = client.ServerAddress;
+            this.enteredPort = client.ServerPort;
 
 //            if (client.IsUsable())
 //            {
@@ -76,6 +77,7 @@ namespace PhiClient
         }
 
         string enteredAddress = "";
+        int enteredPort = 0;
 
         public Displayable DoHeader(PhiClient instance)
         {
@@ -88,18 +90,43 @@ namespace PhiClient
             if (instance.ConnectionState == WebSocketState.Open)
             {
                 // Add a non-editable field displaying the currently connected address followed by a disconnect button
-                cont.Add(new TextWidget("Connected to " + instance.ServerAddress, GameFont.Small, TextAnchor.MiddleLeft));
-                cont.Add(new WidthContainer(new ButtonWidget("Disconnect", () => { OnDisconnectButtonClick(); }), 140f));
+                cont.Add(new TextWidget($"Connected to {instance.ServerAddress}:{instance.ServerPort}", GameFont.Small, TextAnchor.MiddleLeft));
+                cont.Add(new WidthContainer(new ButtonWidget("Disconnect", OnDisconnectButtonClick), 140f));
             }
             else
             {
-                // Add an editable field with the last address and a connect button
-                cont.Add(new TextFieldWidget(enteredAddress, (s) => { enteredAddress = s; }));
-                cont.Add(new WidthContainer(new ButtonWidget("Connect", () => { OnConnectButtonClick(); }), 140f));
+                // Add an editable address field with a label
+                cont.Add(new WidthContainer(new TextWidget("Address: ", GameFont.Small, TextAnchor.MiddleLeft), 60f));
+                cont.Add(new TextFieldWidget(enteredAddress, s => enteredAddress = s));
+
+                // Add an editable port field with a label
+                cont.Add(new WidthContainer(new TextWidget("Port: ", GameFont.Small, TextAnchor.MiddleLeft), 30f));
+                cont.Add(new WidthContainer(new TextFieldWidget(enteredPort.ToString(), s => enteredPort = parsePort(s)), 50f));
+
+                // Add a connect button
+                cont.Add(new WidthContainer(new ButtonWidget("Connect", OnConnectButtonClick), 140f));
             }
 
             // Return the constructed header
             return cont;
+        }
+
+        /// <summary>
+        /// Tries to parse the given value as a port number between 1 and 65535 inclusive.
+        /// </summary>
+        /// <param name="value">String to parse</param>
+        /// <returns>Parsed value</returns>
+        private int parsePort(string value)
+        {
+            if (int.TryParse(value, out int validInt))
+            {
+                if (validInt > 0 && validInt < 65536)
+                {
+                    return validInt;
+                }
+            }
+
+            return enteredPort;
         }
 
         string wantedNickname;
@@ -163,6 +190,7 @@ namespace PhiClient
         public void OnConnectButtonClick()
         {
             PhiClient.Instance.ServerAddress = enteredAddress.Trim();
+            PhiClient.Instance.ServerPort = enteredPort;
             PhiClient.Instance.Connect();
         }
 

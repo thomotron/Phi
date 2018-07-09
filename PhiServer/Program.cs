@@ -9,7 +9,10 @@ namespace PhiServer
     {
         static void Main(string[] args)
         {
-            PhiServer server = new PhiServer(IPAddress.Any, 16180);
+            ServerConfig config = new ServerConfig("server.conf");
+            config.Load();
+
+            PhiServer server = new PhiServer(config.Address, config.Port);
 
             server.Start();
 
