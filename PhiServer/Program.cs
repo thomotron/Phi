@@ -405,7 +405,7 @@ namespace PhiServer
             bannedKeys.Add(key);
 
             // Add the key to the ban file
-            File.WriteAllLines(ID_BAN_FILE, new string[] {key});
+            File.AppendAllLines(ID_BAN_FILE, new string[] {key});
 
             // Find the connection for the newly banned user
             ServerClient client = connectedUsers.First(connectedUserPair => connectedUserPair.Value.id == id).Key;
@@ -441,7 +441,7 @@ namespace PhiServer
             bannedIPs.Add(ipAddress);
 
             // Add the IP to the ban file
-            File.WriteAllLines(IP_BAN_FILE, new string[] {ipAddress.ToString()});
+            File.AppendAllLines(IP_BAN_FILE, new string[] {ipAddress.ToString()});
 
             // Disconnect any clients connected from the newly banned IP
             foreach (ServerClient client in connectedUsers.Keys)
