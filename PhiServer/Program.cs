@@ -485,7 +485,7 @@ namespace PhiServer
             {
                 string line = Console.ReadLine();
                 
-                List<string> commandArgs = line.Split(' ').ToList();
+                List<string> commandArgs = line.Trim().Split(' ').ToList();
                 string command = commandArgs.First();
                 commandArgs.RemoveAt(0);
 
